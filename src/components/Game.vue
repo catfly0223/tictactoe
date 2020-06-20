@@ -1,18 +1,82 @@
 <template>
-    <div class= "game">
-          <Board />
+    <div class="game">
+        <div class="game-area">
+            <Board :cells="cells" :winner="winner" @click="click" />
+            <div class="game-info">
+                <p v-if="stepNumber === 0">
+                    スタート！<b :class="currentPlayer">{{ currentPlayer }}</b>
+                </p>
+                <p v-else-if="!!winner">
+                    勝者は
+                        <b :class="currentPlayer">{{ currentPlayer }}</b>
+                    <button @click="restart">もう一回！</button>
+                </p>
+                <p v-else-if="stepNumber > 8">
+                    引き分け！&nbsp;
+                <button @click="restart">もう一回！</button>
+                </p>
+                <p v-else>
+                    升目を選んでね  &nbsp;
+                    <b :class="currentPlayer">{{ currentPlayer }}</b>
+                </p>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
 import Board from "./Board";
-
 export default {
     name: "Game",
     components: {
         Board
+    },
+    data() {
+        return {
+            cells: Array(9).fill(null),
+            stepNumber: 0,
+            currentPlayer: "X",
+            winner: null
+        }
+    },
+    methods: {
+        hasWinner(){
+            if(this.winner) return true
+            const cells = this.cells
+            const winConditions = [
+                // 横の勝利条件
+                [0,1,2], [3,4,5], [6,7,8],
+                // 縦の勝利条件
+                [0,3,6], [1,4,7], [2,5,8],
+                // 斜めの勝利条件
+                [0,4,8], [2,4,6]
+            ]
+            for (let i=0; i < winConditions.length; i++){
+                const [a,b,c] = winConditions[i]
+                if (cells[a] && cells[a] === cells[b] && cells[a] === cells[c]){
+                    this.winner = [a,b,c]
+                    return true
+                }
+            }
+            return false
+        },
+        restart() {
+            this.cells = Array(9).fill(null)
+            this.stepNumber = 0
+            this.currentPlayer = this.currentPlayer === "X" ? "O" : "X"
+            this.winner = null
+        },
+        click (i) {
+            // クリック時に既にクリックされているか勝利者が確定していたら抜けだす
+            if (this.cells[i] || this.winner) return
+            // 升目をプレイヤーの記号に変える
+            this.$set(this.cells, i, this.currentPlayer)
+            if (!this.hasWinner()) {
+                this.stepNumber++
+                this.currentPlayer = this.currentPlayer === "X" ? "O" : "X"
+            }
+        }
     }
-
 }
 </script>
 

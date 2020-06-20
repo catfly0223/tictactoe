@@ -1,24 +1,41 @@
 <template>
-    <div class="board">
-        <!-- 行の作成 -->
-        <div v-for="row in 3" v-bind:key="row" class="board-row">
-            <Cell v-for="i in 3" :key="i" :value="'O'"/>
+    <div class="board" v-if="cells">
+        <!-- 行を作成 -->
+        <div v-for="row in 3" :key="row" class="board-row">
+            <cell v-for="i in 3" :key="indexByRow(i, row)"
+                :value="cells[indexByRow(i,row)]"
+                :disabled="!!winner"
+                :winner="!!winner && winner.includes(indexByRow(i,row))"
+                @click="click(i,row)"
+            />
         </div>
     </div>
+    
 </template>
 
 <script>
-import Cell from "./Cell";
-
+import Cell from "./Cell.vue";
 export default {
     name: "Board",
-    components :{
+    props: {
+        cells: Array,
+        winner: Array
+    },
+    components: {
         Cell
+    },
+    methods: {
+        indexByRow(index, row, max=3) {
+            return (row * max + index) - (max + 1)
+        },
+        click (index, row) {
+            this.$emit("click", this.indexByRow(index, row))
+        }
     }
 }
 </script>
 
-<style>
+<style scoped>
     .board {
         border: 1rem solid #fff4;
         box-shadow: 2.5px 5px 25px #0004, 0 1px 6px #0006;

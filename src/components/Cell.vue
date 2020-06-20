@@ -1,10 +1,11 @@
 <template>
-    <button class="cell" v-bind:class="[value]" 
-            >
-        {{ value }}
+    <button class="cell" :class="[value, { 'winner' : winner} ]" 
+            :disabled="disabled" @click="click">
+        {{value}}
     </button>
 </template>
 
+    
 <script>
 export default {
     name: "Cell",
@@ -12,11 +13,16 @@ export default {
         value: String,
         winner: Boolean,
         disabled: Boolean
+    },
+    methods: {
+        click() {
+            this.$emit("click")
+        }
     }
 }
 </script>
 
-<style>
+<style scoped>
     .cell {
         background: #fff9;
         background-blend-mode: exclusion;
