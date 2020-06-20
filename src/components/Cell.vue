@@ -1,6 +1,7 @@
 <template>
-    <button class="cell" v-bind:class="[value, {'winner': winner} ]"
+    <button class="cell" v-bind:class="[value]" 
             >
+        {{ value }}
     </button>
 </template>
 

@@ -1,6 +1,9 @@
 <template>
     <div class="board">
-        <Cell />
+        <!-- 行の作成 -->
+        <div v-for="row in 3" v-bind:key="row" class="board-row">
+            <Cell v-for="i in 3" :key="i" :value="'O'"/>
+        </div>
     </div>
 </template>
 
